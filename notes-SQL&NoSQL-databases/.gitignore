@@ -1,0 +1,5 @@
+node_modules
+chap07.sqlite3
+log.txt
+notes-sequelize.sqlite3
+package-lock.json
