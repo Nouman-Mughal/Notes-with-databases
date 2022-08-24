@@ -1,7 +1,0 @@
-dbname: users
-username: noman
-password: noman123
-params:
-    host: localhost
-    port: 5858
-    dialect: mysql

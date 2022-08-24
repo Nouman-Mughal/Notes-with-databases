@@ -13,7 +13,7 @@ import { sessionCookieName } from '../app.mjs';
 export const router = express.Router();
 
 import DBG from 'debug';
-import { profile } from 'console';
+// import { profile } from 'console';
 const debug = DBG('notes:router-users');
 const error = DBG('notes:error-users');
 
@@ -71,22 +71,26 @@ passport.use(new LocalStrategy(
     }
 ));
 
+// passport.serializeUser((user, done)=> {
+//     try {
+//       done(null, user.username);
+//     } catch (e) { done(e); }
+// });
+
+// passport.deserializeUser((username, done) => {
+//     try {
+//       let user = usersModel.find(username);
+//       done(null, user);
+//     } catch(e) { done(e); }
+// });
 passport.serializeUser(function(user, done) {
-    try {
-      done(null, user.familyName);
-    } catch (e) { done(e); }
+  done(null, user);
 });
 
-passport.deserializeUser(async (familyName, done) => {
-    try {
-      let user = await usersModel.find(familyName);
-      done(null, user);
-    } catch(e) { done(e); }
+passport.deserializeUser(function(user, done) {
+  done(null, user);
 });
 
-// const googlecallback = keys.GOOGLE_CALLBACK_HOST
-//     ? keys.GOOGLE_CALLBACK_HOST
-//     : "http://localhost:3011";
 export var googleLogin;
 
 if (typeof keys.GOOGLE_CONSUMER_KEY !== 'undefined'//just performing validation
@@ -101,7 +105,7 @@ if (typeof keys.GOOGLE_CONSUMER_KEY !== 'undefined'//just performing validation
     async (token, tokenSecret, profile, done) => {
         try {
           done(null, await usersModel.findOrCreate({
-            id: profile.id,  username:profile.displayName,password: "",
+            id: profile.username,  username:profile.username,password: "",
             provider: profile.provider, familyName: profile.displayName,
             givenName: "", middleName: "",
             photos: profile.photos, emails: profile.emails

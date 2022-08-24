@@ -45,10 +45,11 @@ export async function connectDB() {
     log('Sequelize params '+ util.inspect(params));
     
     sequlz = new Sequelize(params.dbname, params.username,
-                           params.password,{
+                params.password,params.params)
+                        //    params.password,{
                             
-                            dialect:'sqlite'
-                           });
+                        //     dialect:'sqlite'
+                        //    });
     
     // These fields largely come from the Passport / Portable Contacts schema.
     // See http://www.passportjs.org/docs/profile
@@ -77,7 +78,7 @@ export async function connectDB() {
 
 export function userParams(req) {
     return {
-        // username: req.params.familyName,
+        username: req.params.userName,
         password: req.params.password,
         provider: req.params.provider,
         familyName: req.params.familyName,
@@ -87,23 +88,8 @@ export function userParams(req) {
         photos: JSON.stringify(req.params.photos)
     };
 }
-
-export async function findOneUser(familyName) {
-    let user = await SQUser.findOne({ where: { familyName: familyName} });
-    // user = user ? sanitizedUser(user) : undefined;
-    return user;
-}
-
-export async function createUser(req) {
-    let tocreate = userParams(req);
-    console.log(`create tocreate ${util.inspect(tocreate)}`);
-    await SQUser.create(tocreate);
-    const result = await findOneUser(req.params.familyName);
-    return result;
-}
-
 export function sanitizedUser(user) {
-    // log(util.inspect(user));
+    log(util.inspect(user));
     var ret = {
         id: user.familyName,
         username: user.familyName,
@@ -120,3 +106,18 @@ export function sanitizedUser(user) {
     } catch(e) { ret.photos = []; }
     return ret;
 }
+
+export function findOneUser(username) {
+    let user = SQUser.findOne({ where: { username:username} });
+    user = user ? sanitizedUser(user) : undefined;
+    return user;
+}
+
+export async function createUser(req) {
+    let tocreate = userParams(req);
+    console.log(`create tocreate ${util.inspect(tocreate)}`);
+    await SQUser.create(tocreate);
+    const result = await findOneUser(req.params.familyName);
+    return result;
+}
+

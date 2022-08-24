@@ -1,6 +1,6 @@
 dbname: users
-username: 'root'
-password: root
+username: 
+password: 
 params:
     dialect: sqlite
     storage: users-sequelize.sqlite3

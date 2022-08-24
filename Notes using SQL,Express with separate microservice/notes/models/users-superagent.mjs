@@ -75,7 +75,7 @@ export async function findOrCreate(profile) {
     var res = await request
         .post(reqURL('/find-or-create'))
         .send({
-            username: profile.displayName,
+            username: profile.id,
             password: await hashpass(profile.password),
             provider: profile.provider,
             familyName: profile.familyName,

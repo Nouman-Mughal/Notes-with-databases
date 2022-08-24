@@ -63,20 +63,20 @@ server.post('/create-user', async (req, res, next) => {
 server.post('/update-user/:username', async (req, res, next) => {
     try {
         log(`update-user params ${util.inspect(req.params)}`);
-        //need to change all username into familyName bcz google is providing only only familyName.
+        //need to change all username into usernamebcz google is providing only only familyName.
         //on using username getting undefined value.
         await connectDB();
         let toupdate = userParams(req);
         log(`updating ${util.inspect(toupdate)}`);
-        await SQUser.update(toupdate, { where: { familyName: req.params.familyName }});
-        const result = await findOneUser(req.params.familyName);
+        await SQUser.update(toupdate, { where: { username: req.params.username }});
+        const result = await findOneUser(req.params.username);
         log('updated '+ util.inspect(result));
         res.contentType = 'json';
         res.send(result);
         next(false);
     } catch(err) {
         res.send(500, err);
-        error(`/update-user/${req.params.familyName} ${err.stack}`);
+        error(`/update-user/${req.params.username} ${err.stack}`);
         next(false);
     }
 });
@@ -86,7 +86,7 @@ server.post('/find-or-create', async (req, res, next) => {
     log('find-or-create '+ util.inspect(req.params));
     try {
         await connectDB();
-        let user = await findOneUser(`${req.params.familyName}`);
+        let user = await findOneUser(req.params.username);
         if (!user) {
             user = await createUser(req);
             if (!user) throw new Error('No user created');
@@ -107,9 +107,9 @@ server.post('/find-or-create', async (req, res, next) => {
 server.get('/find/:username', async (req, res, next) => {
     try {
         await connectDB();
-        const user = await findOneUser(req.params.familyName);
+        const user = await findOneUser(req.params.username);
         if (!user) {
-            res.send(404, new Error("Did not find "+ req.params.familyName));
+            res.send(404, new Error("Did not find "+ req.params.username));
         } else {
             res.contentType = 'json';
             res.send(user);
@@ -117,7 +117,7 @@ server.get('/find/:username', async (req, res, next) => {
         next(false);
     } catch(err) {
         res.send(500, err);
-        error(`/find/${req.params.familyName} ${err.stack}`);
+        error(`/find/${req.params.username} ${err.stack}`);
         next(false);
     }
 });
@@ -126,7 +126,7 @@ server.get('/find/:username', async (req, res, next) => {
 server.del('/destroy/:username', async (req, res, next) => {
     try {
         await connectDB();
-        const user = await SQUser.findOne({ where: { familyName: req.params.familyName } });
+        const user = await SQUser.findOne({ where: { username: req.params.username} });
         if (!user) {
             res.send(404,
                 new Error(`Did not find requested ${req.params.username} to delete`));
@@ -138,27 +138,27 @@ server.del('/destroy/:username', async (req, res, next) => {
         next(false); 
     } catch(err) {
         res.send(500, err);
-        error(`/destroy/${req.params.familyName} ${err.stack}`);
+        error(`/destroy/${req.params.username} ${err.stack}`);
         next(false);
     }
 });
 
 // Check password
 server.post('/password-check', async (req, res, next) => {
-    log(`passwordCheck ${util.inspect(req.params)}`);
+    // log(`passwordCheck ${util.inspect(req.params)}`);
     try {
         await connectDB();
-        const user = await SQUser.findOne({ where: { familyName: req.params.familyName } });
-        log(`userPasswordCheck query=${req.params.familyName} ${req.params.password} user=${user.familyName} ${user.password}`);
+        const user = await SQUser.findOne({ where: { username: req.params.username} });
+        // log(`userPasswordCheck query=${req.params.username} ${req.params.password} user=${user.username} ${user.password}`);
         let checked;
         if (!user) {
             checked = { 
-                check: false, familyName: req.params.familyName, 
+                check: false, username: req.params.username, 
                 message: "Could not find user" 
             };
         } else {
             let pwcheck = false;
-            if (user.familyName === req.params.familyName) {
+            if (user.username=== req.params.username) {
                 pwcheck = await bcrypt.compare(req.params.password, user.password);
             }
             if (pwcheck) {
@@ -200,7 +200,7 @@ server.get('/list', async (req, res, next) => {
 });
 
 // Mimic API Key authentication.
-
+//HTTP basic authorization
 var apiKeys = [ { user: 'them', key: 'D4ED43C0-8BD6-4FE2-B358-7C0E230D11EF' } ];
 
 function check(req, res, next) {

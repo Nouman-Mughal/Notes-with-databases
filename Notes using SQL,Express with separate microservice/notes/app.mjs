@@ -1,7 +1,7 @@
 import { default as express } from 'express';
 import { default as hbs } from 'hbs';
 import * as path from 'path';
-import passport from 'passport';
+// import passport from 'passport';
 // import * as favicon from'serve-favicon';
 import { default as logger } from 'morgan';
 // import { default as rfs } from 'rotating-file-stream';
@@ -85,10 +85,7 @@ app.use(session({
     saveUninitialized: true,
     name: sessionCookieName
 }));
-// if (app.get("env") === "production") {
-//     app.set("trust proxy", 1);
-//     session.Cookie.secure = true;
-// }
+
 initPassport(app);
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/assets/vendor/bootstrap', express.static(
