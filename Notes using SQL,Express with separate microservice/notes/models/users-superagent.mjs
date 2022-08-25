@@ -81,7 +81,7 @@ export async function findOrCreate(profile) {
             familyName: profile.familyName,
             givenName: profile.givenName,
             middleName: profile.middleName,
-            emails: profile.emails, photos: profile.photos
+            emails: profile.emails, photos: profile.photos 
         })
         .set('Content-Type', 'application/json')
         .set('Acccept', 'application/json')

@@ -13,7 +13,7 @@
          id="navbarLogIn">
             <span class="navbar-text text-dark col">{{ title }}</span>
             <a class="btn btn-dark col-auto" href="/users/logout">
-            Log Out <span class="badge badge-light">{{ user.username }}
+            Log Out <span class="badge badge-light">{{ user.username}}
          </span></a>
             <a class="nav-item nav-link btn btn-dark col-auto" 
          href='/notes/add'>
@@ -26,8 +26,8 @@
                                         Log in</a>
             {{#if googleLogin}}
             <a class="nav-item nav-link btn btn-dark col-auto" href="/users/auth/google">
-            {{!-- <img width="15px" --}}
-                {{!-- src="/assets/vendor/twitter/Twitter_Social_Icon_Rounded_Square_Color.png"/> --}}
+            <img width="15px" 
+                 src="/assets/vendor/google/Google_Social_Icon_Rounded_Square_Color.png"/>
                 Log in with Google</a>
             {{/if}}
         </div>

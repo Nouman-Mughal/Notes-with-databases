@@ -3,6 +3,7 @@ import { default as jsyaml } from 'js-yaml';
 import { promises as fs } from 'fs';
 import * as util from 'util';
 import DBG from 'debug';
+import { profile } from "console";
 const log = DBG('users:model-users'); 
 const error = DBG('users:error'); 
 
@@ -78,7 +79,7 @@ export async function connectDB() {
 
 export function userParams(req) {
     return {
-        username: req.params.userName,
+        username: req.params.username,
         password: req.params.password,
         provider: req.params.provider,
         familyName: req.params.familyName,
@@ -91,7 +92,7 @@ export function userParams(req) {
 export function sanitizedUser(user) {
     log(util.inspect(user));
     var ret = {
-        id: user.familyName,
+        id: user.username,
         username: user.familyName,
         provider: user.provider,
         familyName: user.familyName,
@@ -117,7 +118,7 @@ export async function createUser(req) {
     let tocreate = userParams(req);
     console.log(`create tocreate ${util.inspect(tocreate)}`);
     await SQUser.create(tocreate);
-    const result = await findOneUser(req.params.familyName);
+    const result = await findOneUser(req.params.username);
     return result;
 }
 

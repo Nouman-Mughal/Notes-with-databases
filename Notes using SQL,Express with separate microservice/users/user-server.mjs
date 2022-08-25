@@ -86,7 +86,7 @@ server.post('/find-or-create', async (req, res, next) => {
     log('find-or-create '+ util.inspect(req.params));
     try {
         await connectDB();
-        let user = await findOneUser(req.params.username);
+        let user = await findOneUser(`${req.params.familyName}`);
         if (!user) {
             user = await createUser(req);
             if (!user) throw new Error('No user created');
